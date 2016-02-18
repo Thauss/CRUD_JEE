@@ -1,6 +1,7 @@
 package proyecto.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,8 +127,97 @@ public class listaEmpleados extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		DaoEmpleado dao = new DaoEmpleadoImplHibernateMySQL();
+		
+		Map<String,String> inputs = new HashMap();
+		
+		String dato="";
+		
+
+		dato=request.getParameter("borrar");
+		if(dato!=null){
+			dao.borrarEmpleado(dato);
+		}
 		
 		
+		
+		dato=request.getParameter("patronEname");
+		if(dato==null){
+			inputs.put("patronEname", "");
+			
+		}
+		else{
+			dato=request.getParameter("patronEname");
+
+			inputs.put("patronEname", dato);
+		}
+		dato=request.getParameter("minSal");
+		if(dato==null){
+			inputs.put("minSal", "");
+			
+		}
+		else{
+			dato=request.getParameter("minSal");
+
+			inputs.put("minSal", dato);
+		}
+		dato=request.getParameter("maxSal");
+		if(dato==null){
+			inputs.put("maxSal", "");
+			
+		}
+		else{
+			dato=request.getParameter("maxSal");
+
+			inputs.put("maxSal", dato);
+		}
+		dato=request.getParameter("minHiredate");
+		if(dato==null){
+			inputs.put("minHiredate", "");
+			
+		}
+		else{
+			dato=request.getParameter("minHiredate");
+
+			inputs.put("minHiredate", dato);
+		}
+		dato=request.getParameter("maxHiredate");
+		if(dato==null){
+			inputs.put("maxHiredate", "");
+			
+		}
+		else{
+			dato=request.getParameter("maxHiredate");
+
+			inputs.put("maxHiredate", dato);
+		}
+		String[] departamentosSeleccionados =null;
+		
+		departamentosSeleccionados=request.getParameterValues("departamentos");
+		if(departamentosSeleccionados!=null){
+			request.setAttribute("seleccionados", departamentosSeleccionados);
+		}else{
+			departamentosSeleccionados = new String[0];
+			request.setAttribute("seleccionados", departamentosSeleccionados);
+		}
+		
+		List<Empleado> listaEmpleados = dao.devuelveEmpleadosParametrizada(inputs, departamentosSeleccionados);
+		DaoDepartamento daod= new DaoDepartamentoImplHibernateMySQL();
+		List<Departamento> listaDepartamentos =  daod.devuelveTodosDepartamentos();
+		Map<String,String> departamentosMapa = new HashMap();
+			for(Departamento dep:listaDepartamentos){
+				
+				departamentosMapa.put(Byte.toString(dep.getDeptno()), dep.getDname());
+				
+			}
+		
+		
+		
+		
+		request.setAttribute("inputs", inputs);
+		request.setAttribute("empleados", listaEmpleados);
+		request.setAttribute("departamentos", departamentosMapa);
+		request.getRequestDispatcher("listado.jsp").forward(request, response);
 		doGet(request, response);
 		
 	}

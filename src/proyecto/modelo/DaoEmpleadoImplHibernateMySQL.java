@@ -1,5 +1,7 @@
 package proyecto.modelo;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +119,121 @@ public class DaoEmpleadoImplHibernateMySQL implements DaoEmpleado {
 		
 		
 		factoriaSesiones.close();
+	}
+
+	@Override
+	public List<Empleado> devuelveEmpleadosParametrizada(Map<String, String> inputs,String[] numDepartamentos) {
+		
+		SessionFactory factoriaSesiones = new Configuration().configure().buildSessionFactory();
+		
+		Session sesion = factoriaSesiones.openSession();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		
+		boolean isFirst = true; 
+				
+		StringBuilder query = new StringBuilder("from Empleado ");
+				
+		
+		if(inputs.get("patronEname")!=null && !inputs.get("patronEname").equals("")){
+			if(isFirst){
+				query.append(" where ename like '%" + inputs.get("patronEname") + "%'");
+			}else{
+				query.append(" and ename like '%" + inputs.get("patronEname") + "%'");
+			}
+			isFirst = false;
+		}
+	
+		if(numDepartamentos!=null && (numDepartamentos.length>0)){
+			String resultado="";
+			if(isFirst){
+				for(int i = 0; i < numDepartamentos.length; i ++) {
+					
+					if (i == 0) {
+						
+						resultado=" Where deptno in (" + numDepartamentos [i];
+					} 
+
+					else {
+						
+						 resultado+= "," + numDepartamentos [i];
+					}
+					resultado+=")";
+				}
+				query.append(resultado);
+			}
+				
+			else{
+				
+				for(int i = 0; i < numDepartamentos.length; i ++) {
+					
+					if (i == 0) {
+						
+						resultado=" Where deptno in (" + numDepartamentos [i];
+					} 
+
+					else {
+						
+						 resultado+= "," + numDepartamentos [i];
+					}
+					resultado+=")";
+				}
+				query.append(resultado);
+			}
+		
+			isFirst = false;	
+		}
+		
+		if(inputs.get("minSal")!=null && !inputs.get("minSal").equals("")){
+			if(isFirst){
+				query.append(" where sal >= '" + inputs.get("minSal") + "'");
+			}else{
+				query.append(" and sal >= '" + inputs.get("minSal") + "'");
+			}
+			isFirst = false;
+		}
+		
+		if(inputs.get("maxSal")!=null && !inputs.get("maxSal").equals("")){
+			if(isFirst){
+				query.append(" where sal <= '" + inputs.get("maxSal") + "'");
+			}else{
+				query.append(" and sal <= '" + inputs.get("maxSal") + "'");
+			}
+			isFirst = false;
+		}
+		
+		if(inputs.get("minHiredate")!=null && !inputs.get("minHiredate").equals("")){
+			if(isFirst){
+				query.append(" where hiredate >= '" + inputs.get("minHiredate") + "'");
+			}else{
+				query.append(" and hiredate >= '" + inputs.get("minHiredate") + "'");
+			}
+			isFirst = false;
+		}
+		
+		if(inputs.get("maxHiredate")!=null && !inputs.get("maxHiredate").equals("")){
+			if(isFirst){
+				query.append(" where hiredate <= '" + inputs.get("maxHiredate") + "'");
+			}else{
+				query.append(" and hiredate <= '" + inputs.get("maxHiredate") + "'");
+			}
+			isFirst = false;
+		}
+		
+		if(inputs.get("maxHiredate")!=null && !inputs.get("maxHiredate").equals("")){
+			if(isFirst){
+				query.append(" where hiredate <= '" + inputs.get("maxHiredate") + "'");
+			}else{
+				query.append(" and hiredate <= '" + inputs.get("maxHiredate") + "'");
+			}
+			isFirst = false;
+		}
+		
+		
+		query.append(" order by ename");
+		Query result = sesion.createQuery(query.toString());
+		List<Empleado> empleados=result.list();
+		return empleados;
 	}
 
 }

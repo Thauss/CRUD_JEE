@@ -25,7 +25,7 @@
 	
 		<legend>Parámetros de búsqueda</legend>
 		
-		<form name="fConsulta" action="<%=ruta %>/listaEmpleados" method="get">
+		<form name="fConsulta" action="<%=ruta %>/listaEmpleados" method="POST">
 		
 		<table id="campos">
 		

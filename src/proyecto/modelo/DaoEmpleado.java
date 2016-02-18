@@ -14,4 +14,6 @@ public interface DaoEmpleado {
 	
 	void borrarEmpleado(String empno);
 	
+	List<Empleado> devuelveEmpleadosParametrizada(Map<String, String> inputs, String[] departamentosSeleccionados);
+	
 }
